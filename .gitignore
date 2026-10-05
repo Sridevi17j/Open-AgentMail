@@ -1,0 +1,10 @@
+node_modules/
+dist/
+data/
+agent-tools/
+*.log
+.DS_Store
+.env
+.env.local
+*.tsbuildinfo
+coverage/

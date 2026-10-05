@@ -1,0 +1,45 @@
+{
+  "name": "agentbox",
+  "version": "0.1.0",
+  "description": "Self-hosted ephemeral email inboxes for AI agents testing UI email OTP and magic links.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "agentbox": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "skills",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js serve",
+    "dev": "tsx src/cli.ts serve",
+    "mcp": "node dist/cli.js mcp",
+    "mcp:dev": "tsx src/cli.ts mcp",
+    "test": "node --import tsx --test src/*.test.ts",
+    "smoke": "AGENTBOX_SMOKE_DIST=1 node --import tsx --test src/mcp.test.ts",
+    "example:otp": "tsx examples/otp-flow.ts",
+    "example:smtp": "tsx examples/send-smtp.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "mailparser": "^3.7.4",
+    "smtp-server": "^3.13.6",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/mailparser": "^3.4.6",
+    "@types/node": "^22.15.3",
+    "@types/smtp-server": "^3.5.10",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

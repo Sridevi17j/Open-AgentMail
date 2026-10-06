@@ -9,8 +9,8 @@ Use it for email OTP, magic links, and a generated signup password on an app you
 Node.js 20 or newer.
 
 ```bash
-git clone https://github.com/Sridevi17j/open-agentmail
-cd open-agentmail
+git clone https://github.com/Sridevi17j/Open-AgentMail
+cd Open-AgentMail
 npm install
 npm run build
 ```

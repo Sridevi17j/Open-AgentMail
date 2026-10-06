@@ -4,6 +4,8 @@ Agentbox is a self-hosted mailbox for AI agents doing UI tests. An agent creates
 
 It runs on your machine. There is no account, no API key, and no paid temp-mail service.
 
+**Connect an agent:** [Claude Code, Codex CLI, and Cursor](docs/CONNECT.md). That guide has the `claude mcp add` command, the Codex `config.toml` table, and the Cursor `mcp.json` snippet.
+
 ```bash
 npm install
 npm run build
@@ -85,7 +87,7 @@ A Playwright sketch of the same sequence lives in [examples/playwright-pattern.m
 
 ## Configure Cursor
 
-Build first so `dist/cli.js` exists. In Cursor MCP settings, add a stdio server:
+Build first so `dist/cli.js` exists. The copy-paste setup for Cursor, Claude Code, and Codex is [docs/CONNECT.md](docs/CONNECT.md). In Cursor MCP settings, add a stdio server:
 
 ```json
 {

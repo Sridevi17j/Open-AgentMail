@@ -6,3 +6,4 @@
 - SMTP catcher on `127.0.0.1:2525` for the `temp.local` domain, plus an optional JSON store under `./data`.
 - Local HTTP mailroom and API on `127.0.0.1:8791`.
 - Cursor skill for the email OTP / magic-link UI-test flow.
+- Setup guide for Claude Code, Codex CLI, and Cursor in `docs/CONNECT.md`.

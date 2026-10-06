@@ -10,7 +10,7 @@ function actions(): Actions {
   return new Actions(
     new Store({
       domain: "temp.local",
-      dataDir: join(tmpdir(), "agentbox-actions"),
+      dataDir: join(tmpdir(), "open-agentmail-actions"),
       persist: false,
       defaultTtlSeconds: 3600,
       maxMessagesPerInbox: 20,

@@ -1,9 +1,9 @@
-export class AgentboxError extends Error {
+export class OpenAgentMailError extends Error {
   readonly status: number;
 
   constructor(message: string, status = 400) {
     super(message);
-    this.name = "AgentboxError";
+    this.name = "OpenAgentMailError";
     this.status = status;
   }
 }

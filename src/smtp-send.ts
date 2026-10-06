@@ -49,7 +49,7 @@ export function sendSmtpMessage(mail: OutboundMail): Promise<void> {
   );
 
   const steps = [
-    { code: 220, send: "EHLO agentbox.local\r\n" },
+    { code: 220, send: "EHLO open-agentmail.local\r\n" },
     { code: 250, send: `MAIL FROM:<${from}>\r\n` },
     { code: 250, send: `RCPT TO:<${to}>\r\n` },
     { code: 250, send: "DATA\r\n" },

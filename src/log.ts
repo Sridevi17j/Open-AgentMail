@@ -1,9 +1,9 @@
 function write(level: string, message: string, extra?: unknown): void {
   if (extra === undefined) {
-    console.error(`[agentbox] ${level} ${message}`);
+    console.error(`[open-agentmail] ${level} ${message}`);
     return;
   }
-  console.error(`[agentbox] ${level} ${message}`, extra);
+  console.error(`[open-agentmail] ${level} ${message}`, extra);
 }
 
 export const log = {

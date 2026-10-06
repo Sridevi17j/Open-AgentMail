@@ -2,7 +2,7 @@
   "name": "fieldnote-demo",
   "private": true,
   "type": "module",
-  "description": "Local signup app used to test Agentbox email OTP delivery.",
+  "description": "Local signup app used to test Open-AgentMail email OTP delivery.",
   "scripts": {
     "start": "node server.js"
   }

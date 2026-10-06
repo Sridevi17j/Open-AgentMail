@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Talks to a running Agentbox HTTP server. Start one with: npm run dev
+# Talks to a running Open-AgentMail HTTP server. Start one with: npm run dev
 set -euo pipefail
 
-base="${AGENTBOX_URL:-http://127.0.0.1:8791}"
+base="${OPEN_AGENTMAIL_URL:-${AGENTBOX_URL:-http://127.0.0.1:8791}}"
 
 inbox="$(curl -sf -X POST "$base/api/inboxes" -H 'content-type: application/json' -d '{}')"
 id="$(node -e 'const inbox = JSON.parse(process.argv[1]); if (!inbox.inbox_id) process.exit(1); process.stdout.write(inbox.inbox_id)' "$inbox")"

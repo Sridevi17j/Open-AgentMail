@@ -1,14 +1,14 @@
 {
-  "name": "agentbox",
+  "name": "open-agentmail",
   "version": "0.1.0",
-  "description": "Self-hosted ephemeral email inboxes for AI agents testing UI email OTP and magic links.",
+  "description": "Open-AgentMail: self-hosted ephemeral email inboxes for AI agents testing UI email OTP and magic links.",
   "type": "module",
   "license": "MIT",
   "engines": {
     "node": ">=20"
   },
   "bin": {
-    "agentbox": "./dist/cli.js"
+    "open-agentmail": "./dist/cli.js"
   },
   "files": [
     "dist",
@@ -24,7 +24,7 @@
     "mcp": "node dist/cli.js mcp",
     "mcp:dev": "tsx src/cli.ts mcp",
     "test": "node --import tsx --test src/*.test.ts",
-    "smoke": "AGENTBOX_SMOKE_DIST=1 node --import tsx --test src/mcp.test.ts",
+    "smoke": "OPEN_AGENTMAIL_SMOKE_DIST=1 node --import tsx --test src/mcp.test.ts",
     "example:otp": "tsx examples/otp-flow.ts",
     "example:smtp": "tsx examples/send-smtp.ts",
     "demo": "node examples/demo-app/server.js",

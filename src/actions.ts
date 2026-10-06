@@ -1,4 +1,4 @@
-import { AgentboxError } from "./errors.js";
+import { OpenAgentMailError } from "./errors.js";
 import { extractLink, extractOtp, messageBody, snippetAround } from "./extract.js";
 import type { DeleteInboxArgs, InjectMessageArgs, ListMessagesArgs, WaitArgs } from "./schemas.js";
 import type { Store } from "./store.js";
@@ -18,7 +18,7 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
     }, ms);
     const onAbort = () => {
       clearTimeout(timer);
-      reject(new AgentboxError("Wait cancelled", 499));
+      reject(new OpenAgentMailError("Wait cancelled", 499));
     };
     if (signal?.aborted) {
       onAbort();
@@ -36,7 +36,7 @@ export class Actions {
     if (localPart?.includes("@")) {
       const [name, domain] = localPart.split("@");
       if (!name || !domain || domain !== this.store.domain) {
-        throw new AgentboxError(`Address must use the configured domain ${this.store.domain}`);
+        throw new OpenAgentMailError(`Address must use the configured domain ${this.store.domain}`);
       }
       localPart = name;
     }
@@ -46,18 +46,18 @@ export class Actions {
   resolveInbox(ref: { inbox_id?: string; address?: string }): Inbox {
     if (ref.inbox_id) {
       const inbox = this.store.getInbox(ref.inbox_id);
-      if (!inbox) throw new AgentboxError("Inbox not found", 404);
+      if (!inbox) throw new OpenAgentMailError("Inbox not found", 404);
       if (ref.address && inbox.address !== ref.address.trim().toLowerCase()) {
-        throw new AgentboxError("inbox_id and address refer to different inboxes");
+        throw new OpenAgentMailError("inbox_id and address refer to different inboxes");
       }
       return inbox;
     }
     if (ref.address) {
       const inbox = this.store.getInboxByAddress(ref.address);
-      if (!inbox) throw new AgentboxError("Inbox not found", 404);
+      if (!inbox) throw new OpenAgentMailError("Inbox not found", 404);
       return inbox;
     }
-    throw new AgentboxError("Provide inbox_id or address");
+    throw new OpenAgentMailError("Provide inbox_id or address");
   }
 
   listMessages(args: ListMessagesArgs): { inbox_id: string; address: string; messages: MessageSummaryJson[] } {
@@ -73,24 +73,24 @@ export class Actions {
   getMessage(inboxRef: { inbox_id?: string; address?: string }, messageId: string): MessageJson {
     const inbox = this.resolveInbox(inboxRef);
     const message = this.store.getMessage(inbox.id, messageId);
-    if (!message) throw new AgentboxError("Message not found", 404);
+    if (!message) throw new OpenAgentMailError("Message not found", 404);
     return messageJson(message);
   }
 
   async deleteInbox(args: DeleteInboxArgs): Promise<{ deleted: true; inbox_id: string; address: string }> {
     const inbox = this.resolveInbox(args);
     const deleted = await this.store.deleteInbox(inbox.id);
-    if (!deleted) throw new AgentboxError("Inbox not found", 404);
+    if (!deleted) throw new OpenAgentMailError("Inbox not found", 404);
     return { deleted: true, inbox_id: deleted.id, address: deleted.address };
   }
 
   async injectMessage(args: InjectMessageArgs): Promise<{ message_id: string; inbox_id: string; received_at: string }> {
     if (!args.text?.trim() && !args.html?.trim()) {
-      throw new AgentboxError("inject_message requires text or html");
+      throw new OpenAgentMailError("inject_message requires text or html");
     }
     const inbox = this.resolveInbox(args);
     const message = await this.store.addMessage(inbox.id, {
-      from: args.from?.trim() || `Agentbox <noreply@${this.store.domain}>`,
+      from: args.from?.trim() || `Open-AgentMail <noreply@${this.store.domain}>`,
       to: [inbox.address],
       subject: args.subject,
       text: args.text ?? "",
@@ -106,7 +106,7 @@ export class Actions {
       if (!code) return null;
       return { code, message_id: message.id, raw_snippet: snippetAround(body, code) };
     });
-    if (!found) throw new AgentboxError("Timed out waiting for an OTP", 408);
+    if (!found) throw new OpenAgentMailError("Timed out waiting for an OTP", 408);
     return found;
   }
 
@@ -117,7 +117,7 @@ export class Actions {
       const body = messageBody(message.text, message.html);
       return { url, message_id: message.id, raw_snippet: snippetAround(`${body}\n${url}`, url) };
     });
-    if (!found) throw new AgentboxError("Timed out waiting for a magic link", 408);
+    if (!found) throw new OpenAgentMailError("Timed out waiting for a magic link", 408);
     return found;
   }
 
@@ -137,7 +137,7 @@ export class Actions {
     const deadline = Date.now() + timeoutMs;
 
     for (;;) {
-      if (options.signal?.aborted) throw new AgentboxError("Wait cancelled", 499);
+      if (options.signal?.aborted) throw new OpenAgentMailError("Wait cancelled", 499);
       const match = this.findInInbox(inbox.id, args, notBefore, read);
       if (match) return match;
       const remaining = deadline - Date.now();
@@ -162,9 +162,9 @@ export class Actions {
       try {
         match = read(message);
       } catch (error) {
-        throw error instanceof AgentboxError
+        throw error instanceof OpenAgentMailError
           ? error
-          : new AgentboxError(error instanceof Error ? error.message : "Could not read the message");
+          : new OpenAgentMailError(error instanceof Error ? error.message : "Could not read the message");
       }
       if (match) return match;
     }
@@ -175,7 +175,7 @@ export class Actions {
 function parseNotBefore(value: string | undefined): number | null {
   if (!value) return null;
   const parsed = Date.parse(value);
-  if (Number.isNaN(parsed)) throw new AgentboxError("not_before must be an ISO timestamp");
+  if (Number.isNaN(parsed)) throw new OpenAgentMailError("not_before must be an ISO timestamp");
   return parsed;
 }
 

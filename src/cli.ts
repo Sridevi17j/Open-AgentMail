@@ -2,7 +2,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
-import { Agentbox } from "./app.js";
+import { OpenAgentMail } from "./app.js";
 import { helpText, parseCli } from "./config.js";
 import { log } from "./log.js";
 import { attachMcp } from "./mcp.js";
@@ -17,15 +17,15 @@ async function main(): Promise<void> {
 
   const { command, config } = parseCli(argv);
   if (command !== "mcp" && command !== "serve") {
-    throw new Error(`Unknown command "${command}". Use "agentbox mcp" or "agentbox serve".`);
+    throw new Error(`Unknown command "${command}". Use "open-agentmail mcp" or "open-agentmail serve".`);
   }
   if (!config.smtpEnabled && !config.httpEnabled && command === "serve") {
     throw new Error("serve needs SMTP, HTTP, or both. Remove --no-smtp or --no-http.");
   }
 
-  const app = new Agentbox(config);
+  const app = new OpenAgentMail(config);
   await app.start();
-  log.info(`Agentbox ${VERSION} ready for @${config.domain}`);
+  log.info(`Open-AgentMail ${VERSION} ready for @${config.domain}`);
   if (config.smtpEnabled) log.info(`smtp listening on ${config.smtpHost}:${app.smtpPort}`);
   if (config.httpEnabled) log.info(`http listening on http://${config.httpHost}:${app.httpPort}`);
   if (!isPublicMailDomain(config.domain)) {
@@ -42,7 +42,7 @@ async function main(): Promise<void> {
   process.on("SIGTERM", () => shutdown(0));
 
   if (command === "mcp") {
-    const server = new McpServer({ name: "agentbox", version: VERSION });
+    const server = new McpServer({ name: "open-agentmail", version: VERSION });
     attachMcp(server, app.actions);
     const transport = new StdioServerTransport();
     await server.connect(transport);

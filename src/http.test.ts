@@ -4,11 +4,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { Agentbox } from "./app.js";
+import { OpenAgentMail } from "./app.js";
 import type { Config } from "./config.js";
 
-async function start(overrides: Partial<Config> = {}): Promise<Agentbox> {
-  const dir = await mkdtemp(join(tmpdir(), "agentbox-http-"));
+async function start(overrides: Partial<Config> = {}): Promise<OpenAgentMail> {
+  const dir = await mkdtemp(join(tmpdir(), "open-agentmail-http-"));
   const config: Config = {
     domain: "temp.local",
     smtpHost: "127.0.0.1",
@@ -27,7 +27,7 @@ async function start(overrides: Partial<Config> = {}): Promise<Agentbox> {
     maxBodyChars: 20_000,
     ...overrides,
   };
-  const app = new Agentbox(config);
+  const app = new OpenAgentMail(config);
   await app.start();
   return app;
 }
@@ -40,7 +40,7 @@ test("http sample flow returns 482913", async () => {
     assert.equal(health.ok, true);
     assert.equal(health.domain, "temp.local");
     const page = await fetch(base).then((response) => response.text());
-    assert.match(page, /Agentbox mailroom/);
+    assert.match(page, /Open-AgentMail mailroom/);
     assert.match(page, /Run sample OTP/);
 
     const created = (await fetch(`${base}/api/inboxes`, {
@@ -97,8 +97,8 @@ test("requires a bearer token when one is configured", async () => {
 });
 
 test("refuses to publish HTTP without a token", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "agentbox-open-"));
-  const app = new Agentbox({
+  const dir = await mkdtemp(join(tmpdir(), "open-agentmail-open-"));
+  const app = new OpenAgentMail({
     domain: "temp.local",
     smtpHost: "127.0.0.1",
     smtpPort: 0,
@@ -115,5 +115,5 @@ test("refuses to publish HTTP without a token", async () => {
     maxMessagesPerInbox: 10,
     maxBodyChars: 1000,
   });
-  await assert.rejects(() => app.start(), /AGENTBOX_API_TOKEN/);
+  await assert.rejects(() => app.start(), /OPEN_AGENTMAIL_API_TOKEN/);
 });

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
-import { AgentboxError } from "./errors.js";
+import { OpenAgentMailError } from "./errors.js";
 import { log } from "./log.js";
 import { isValidLocalPart, randomLocalPart, randomPassword } from "./passwords.js";
 import type { Inbox, StoredMessage } from "./types.js";
@@ -97,7 +97,7 @@ export class Store {
     let localPart: string;
     if (requested) {
       if (!isValidLocalPart(requested)) {
-        throw new AgentboxError("local_part must be 1-64 characters of letters, numbers, and . _ + -");
+        throw new OpenAgentMailError("local_part must be 1-64 characters of letters, numbers, and . _ + -");
       }
       localPart = requested;
     } else {
@@ -109,16 +109,16 @@ export class Store {
           break;
         }
       }
-      if (!generated) throw new AgentboxError("Could not allocate a mailbox name", 500);
+      if (!generated) throw new OpenAgentMailError("Could not allocate a mailbox name", 500);
       localPart = generated;
     }
     const address = `${localPart}@${this.domain}`;
     if (this.inboxes.some((inbox) => inbox.address === address)) {
-      throw new AgentboxError(`Inbox ${address} already exists`, 409);
+      throw new OpenAgentMailError(`Inbox ${address} already exists`, 409);
     }
     const ttlSeconds = input.ttlSeconds ?? this.defaultTtlSeconds;
     if (!Number.isInteger(ttlSeconds) || ttlSeconds < 0) {
-      throw new AgentboxError("ttl_seconds must be an integer >= 0");
+      throw new OpenAgentMailError("ttl_seconds must be an integer >= 0");
     }
     const createdAt = this.now().toISOString();
     const inbox: Inbox = {
@@ -163,7 +163,7 @@ export class Store {
   async addMessage(inboxId: string, input: NewMessageInput): Promise<StoredMessage> {
     this.purgeExpired();
     const inbox = this.inboxes.find((item) => item.id === inboxId);
-    if (!inbox) throw new AgentboxError("Inbox not found", 404);
+    if (!inbox) throw new OpenAgentMailError("Inbox not found", 404);
     const text = clip(input.text ?? "", this.maxBodyChars);
     const html = input.html == null ? null : clip(input.html, this.maxBodyChars);
     const message: StoredMessage = {

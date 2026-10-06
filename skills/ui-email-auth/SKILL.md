@@ -1,16 +1,16 @@
 ---
 name: ui-email-auth
 description: >-
-  Sign up or log in during an authorized UI test with a temporary Agentbox
+  Sign up or log in during an authorized UI test with a temporary Open-AgentMail
   email inbox, then read an OTP or magic link. Use when a flow needs email
   verification, a one-time code, a magic link, or a generated signup password.
   Do not use for Google, GitHub, Apple, SSO, or any other OAuth provider, and
   do not use for SMS.
 ---
 
-# UI email auth with Agentbox
+# UI email auth with Open-AgentMail
 
-Agentbox is a local mailbox for tests. It is not a login broker and it does not talk to Gmail, GitHub, or any paid temp-mail API.
+Open-AgentMail is a local mailbox for tests. It is not a login broker and it does not talk to Gmail, GitHub, or any paid temp-mail API.
 
 ## When to use
 
@@ -33,15 +33,15 @@ If the only path is OAuth, stop and say so. Do not invent an email workaround.
 
 ## Before you start
 
-The `agentbox` MCP server must be connected. It listens for MCP on stdio and, by default, for SMTP on `127.0.0.1:2525` and HTTP on `127.0.0.1:8791`.
+The `open-agentmail` MCP server must be connected. It listens for MCP on stdio and, by default, for SMTP on `127.0.0.1:2525` and HTTP on `127.0.0.1:8791`.
 
-`temp.local` is the default domain. Mail addressed to it is delivered only if the app sends it to this Agentbox SMTP port, or if you insert it with `inject_message`. Public websites cannot resolve `temp.local`. For a real staging host, Agentbox has to run on a domain you control, with that domain's MX pointed at the machine. See the project README.
+`temp.local` is the default domain. Mail addressed to it is delivered only if the app sends it to this Open-AgentMail SMTP port, or if you insert it with `inject_message`. Public websites cannot resolve `temp.local`. For a real staging host, Open-AgentMail has to run on a domain you control, with that domain's MX pointed at the machine. See the project README.
 
 ## Steps
 
 1. Call `create_inbox`.
    Keep `address`, `password`, `inbox_id`, and `expires_at`.
-   `password` is a random string for the **app under test**. It is not a mailbox password. Agentbox does not authenticate readers with it.
+   `password` is a random string for the **app under test**. It is not a mailbox password. Open-AgentMail does not authenticate readers with it.
 2. Open the signup or login form.
    Put `address` in the email field.
    If the form has a password field, use `password`.
@@ -90,4 +90,4 @@ The built-in OTP extractor looks for 4–8 digits next to words like code, OTP, 
 
 ## Staging only
 
-Authorized end-to-end tests and staging systems only. Do not use Agentbox to create accounts on third-party services in violation of their terms, to hide abuse, or to collect mail you are not allowed to read.
+Authorized end-to-end tests and staging systems only. Do not use Open-AgentMail to create accounts on third-party services in violation of their terms, to hide abuse, or to collect mail you are not allowed to read.

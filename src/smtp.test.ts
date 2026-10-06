@@ -4,13 +4,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { Agentbox } from "./app.js";
+import { OpenAgentMail } from "./app.js";
 import type { Config } from "./config.js";
 import { SmtpDialogError, sendSmtpMessage } from "./smtp-send.js";
 
-async function start(overrides: Partial<Config> = {}): Promise<Agentbox> {
-  const dir = await mkdtemp(join(tmpdir(), "agentbox-smtp-"));
-  const app = new Agentbox({
+async function start(overrides: Partial<Config> = {}): Promise<OpenAgentMail> {
+  const dir = await mkdtemp(join(tmpdir(), "open-agentmail-smtp-"));
+  const app = new OpenAgentMail({
     domain: "temp.local",
     smtpHost: "127.0.0.1",
     smtpPort: 0,

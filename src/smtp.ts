@@ -4,7 +4,7 @@ import smtpServerModule from "smtp-server";
 import type { SMTPServerDataStream, SMTPServerSession } from "smtp-server";
 
 import type { Config } from "./config.js";
-import { AgentboxError } from "./errors.js";
+import { OpenAgentMailError } from "./errors.js";
 import { log } from "./log.js";
 import { isValidLocalPart } from "./passwords.js";
 import type { Store } from "./store.js";
@@ -50,7 +50,7 @@ export class SmtpReceiver {
       disabledCommands: ["AUTH", "STARTTLS"],
       disableReverseLookup: true,
       hideSTARTTLS: true,
-      banner: "Agentbox ESMTP ready",
+      banner: "Open-AgentMail ESMTP ready",
       size: 1_000_000,
       socketTimeout: 30_000,
       onRcptTo: (address, session, callback) => {
@@ -109,18 +109,18 @@ export class SmtpReceiver {
     const existing = this.store.getInboxByAddress(address);
     if (existing) return existing.id;
     if (!this.config.autoCreate) {
-      throw smtpError(550, `No such inbox ${address}. Create it with Agentbox first.`);
+      throw smtpError(550, `No such inbox ${address}. Create it with Open-AgentMail first.`);
     }
     try {
       const created = await this.store.createInbox({ localPart });
       log.info(`auto-created inbox ${created.address}`);
       return created.id;
     } catch (error) {
-      if (error instanceof AgentboxError && error.status === 409) {
+      if (error instanceof OpenAgentMailError && error.status === 409) {
         const raced = this.store.getInboxByAddress(address);
         if (raced) return raced.id;
       }
-      throw error instanceof AgentboxError ? smtpError(550, error.message) : error;
+      throw error instanceof OpenAgentMailError ? smtpError(550, error.message) : error;
     }
   }
 

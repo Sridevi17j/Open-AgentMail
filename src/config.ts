@@ -23,19 +23,29 @@ export interface ParsedCli {
   config: Config;
 }
 
-function envString(name: string, fallback: string): string {
-  const value = process.env[name];
+function lookupEnv(suffix: string, env: NodeJS.ProcessEnv): { name: string; value: string | undefined } {
+  const name = `OPEN_AGENTMAIL_${suffix}`;
+  const current = env[name];
+  if (current !== undefined && current.trim() !== "") return { name, value: current };
+  const legacy = `AGENTBOX_${suffix}`;
+  const previous = env[legacy];
+  if (previous !== undefined && previous.trim() !== "") return { name: legacy, value: previous };
+  return { name, value: undefined };
+}
+
+function envString(suffix: string, fallback: string, env: NodeJS.ProcessEnv): string {
+  const value = lookupEnv(suffix, env).value;
   if (value === undefined || value.trim() === "") return fallback;
   return value.trim();
 }
 
-function envBool(name: string, fallback: boolean): boolean {
-  const value = process.env[name];
-  if (value === undefined || value.trim() === "") return fallback;
-  const normalized = value.trim().toLowerCase();
+function envBool(suffix: string, fallback: boolean, env: NodeJS.ProcessEnv): boolean {
+  const found = lookupEnv(suffix, env);
+  if (found.value === undefined || found.value.trim() === "") return fallback;
+  const normalized = found.value.trim().toLowerCase();
   if (["1", "true", "yes", "on"].includes(normalized)) return true;
   if (["0", "false", "no", "off"].includes(normalized)) return false;
-  throw new Error(`${name} must be true or false`);
+  throw new Error(`${found.name} must be true or false`);
 }
 
 function parsePort(raw: string, label: string): number {
@@ -45,41 +55,42 @@ function parsePort(raw: string, label: string): number {
   return port;
 }
 
-function envPort(name: string, fallback: number): number {
-  const value = process.env[name];
-  if (value === undefined || value.trim() === "") return fallback;
-  return parsePort(value.trim(), name);
+function envPort(suffix: string, fallback: number, env: NodeJS.ProcessEnv): number {
+  const found = lookupEnv(suffix, env);
+  if (found.value === undefined || found.value.trim() === "") return fallback;
+  return parsePort(found.value.trim(), found.name);
 }
 
-function envInt(name: string, fallback: number, min: number, max: number): number {
-  const value = process.env[name];
-  if (value === undefined || value.trim() === "") return fallback;
-  if (!/^\d+$/.test(value.trim())) throw new Error(`${name} must be an integer`);
-  const parsed = Number(value.trim());
-  if (parsed < min || parsed > max) throw new Error(`${name} must be between ${min} and ${max}`);
+function envInt(suffix: string, fallback: number, min: number, max: number, env: NodeJS.ProcessEnv): number {
+  const found = lookupEnv(suffix, env);
+  if (found.value === undefined || found.value.trim() === "") return fallback;
+  if (!/^\d+$/.test(found.value.trim())) throw new Error(`${found.name} must be an integer`);
+  const parsed = Number(found.value.trim());
+  if (parsed < min || parsed > max) throw new Error(`${found.name} must be between ${min} and ${max}`);
   return parsed;
 }
 
-export function configFromEnv(): Config {
-  const domain = envString("AGENTBOX_DOMAIN", "temp.local").toLowerCase();
+export function configFromEnv(env: NodeJS.ProcessEnv = process.env): Config {
+  const domainEnv = lookupEnv("DOMAIN", env);
+  const domain = (domainEnv.value?.trim() || "temp.local").toLowerCase();
   if (!isValidDomain(domain)) {
-    throw new Error(`AGENTBOX_DOMAIN "${domain}" is not a valid domain`);
+    throw new Error(`${domainEnv.name} "${domain}" is not a valid domain`);
   }
-  const token = envString("AGENTBOX_API_TOKEN", "");
+  const token = envString("API_TOKEN", "", env);
   return {
     domain,
-    smtpHost: envString("AGENTBOX_SMTP_HOST", "127.0.0.1"),
-    smtpPort: envPort("AGENTBOX_SMTP_PORT", 2525),
-    smtpEnabled: envBool("AGENTBOX_SMTP_ENABLED", true),
-    httpHost: envString("AGENTBOX_HTTP_HOST", "127.0.0.1"),
-    httpPort: envPort("AGENTBOX_HTTP_PORT", 8791),
-    httpEnabled: envBool("AGENTBOX_HTTP_ENABLED", true),
-    dataDir: envString("AGENTBOX_DATA_DIR", "./data"),
-    persist: envBool("AGENTBOX_PERSIST", true),
-    autoCreate: envBool("AGENTBOX_AUTO_CREATE", false),
-    inboxTtlSeconds: envInt("AGENTBOX_INBOX_TTL_SECONDS", 3600, 0, 60 * 60 * 24 * 30),
+    smtpHost: envString("SMTP_HOST", "127.0.0.1", env),
+    smtpPort: envPort("SMTP_PORT", 2525, env),
+    smtpEnabled: envBool("SMTP_ENABLED", true, env),
+    httpHost: envString("HTTP_HOST", "127.0.0.1", env),
+    httpPort: envPort("HTTP_PORT", 8791, env),
+    httpEnabled: envBool("HTTP_ENABLED", true, env),
+    dataDir: envString("DATA_DIR", "./data", env),
+    persist: envBool("PERSIST", true, env),
+    autoCreate: envBool("AUTO_CREATE", false, env),
+    inboxTtlSeconds: envInt("INBOX_TTL_SECONDS", 3600, 0, 60 * 60 * 24 * 30, env),
     apiToken: token === "" ? null : token,
-    allowOpenHttp: envBool("AGENTBOX_ALLOW_OPEN_HTTP", false),
+    allowOpenHttp: envBool("ALLOW_OPEN_HTTP", false, env),
     maxMessagesPerInbox: 200,
     maxBodyChars: 100_000,
   };
@@ -155,11 +166,11 @@ export function isLoopbackHost(host: string): boolean {
 }
 
 export function helpText(): string {
-  return `Agentbox — ephemeral inboxes for UI email tests
+  return `Open-AgentMail — ephemeral inboxes for UI email tests
 
 Usage:
-  agentbox mcp     Start the MCP server on stdio, plus SMTP and the local HTTP API
-  agentbox serve   Start SMTP and the local HTTP API without MCP
+  open-agentmail mcp     Start the MCP server on stdio, plus SMTP and the local HTTP API
+  open-agentmail serve   Start SMTP and the local HTTP API without MCP
 
 Options:
   --domain <domain>         Catch-all domain (default temp.local)

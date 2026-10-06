@@ -16,7 +16,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 function childEnv(extra: Record<string, string>): Record<string, string> {
   const env: Record<string, string> = {};
   for (const [key, value] of Object.entries(process.env)) {
-    if (typeof value === "string" && !key.startsWith("AGENTBOX_")) env[key] = value;
+    if (typeof value === "string" && !key.startsWith("OPEN_AGENTMAIL_") && !key.startsWith("AGENTBOX_")) {
+      env[key] = value;
+    }
   }
   return { ...env, ...extra };
 }
@@ -36,24 +38,24 @@ function asRecord(result: unknown): Record<string, unknown> {
 }
 
 test("mcp create, inject, smtp, and wait_for_otp", { timeout: 25_000 }, async () => {
-  const dataDir = await mkdtemp(join(tmpdir(), "agentbox-mcp-"));
+  const dataDir = await mkdtemp(join(tmpdir(), "open-agentmail-mcp-"));
   const smtpPort = await reservePort();
   const httpPort = await reservePort();
-  const useDist = process.env.AGENTBOX_SMOKE_DIST === "1";
+  const useDist = process.env.OPEN_AGENTMAIL_SMOKE_DIST === "1" || process.env.AGENTBOX_SMOKE_DIST === "1";
   const transport = new StdioClientTransport({
     command: process.execPath,
     args: useDist ? [join(root, "dist", "cli.js"), "mcp"] : ["--import", "tsx", join(root, "src", "cli.ts"), "mcp"],
     cwd: root,
     env: childEnv({
-      AGENTBOX_DOMAIN: "temp.local",
-      AGENTBOX_SMTP_HOST: "127.0.0.1",
-      AGENTBOX_SMTP_PORT: String(smtpPort),
-      AGENTBOX_HTTP_HOST: "127.0.0.1",
-      AGENTBOX_HTTP_PORT: String(httpPort),
-      AGENTBOX_PERSIST: "false",
-      AGENTBOX_DATA_DIR: dataDir,
-      AGENTBOX_AUTO_CREATE: "false",
-      AGENTBOX_INBOX_TTL_SECONDS: "3600",
+      OPEN_AGENTMAIL_DOMAIN: "temp.local",
+      OPEN_AGENTMAIL_SMTP_HOST: "127.0.0.1",
+      OPEN_AGENTMAIL_SMTP_PORT: String(smtpPort),
+      OPEN_AGENTMAIL_HTTP_HOST: "127.0.0.1",
+      OPEN_AGENTMAIL_HTTP_PORT: String(httpPort),
+      OPEN_AGENTMAIL_PERSIST: "false",
+      OPEN_AGENTMAIL_DATA_DIR: dataDir,
+      OPEN_AGENTMAIL_AUTO_CREATE: "false",
+      OPEN_AGENTMAIL_INBOX_TTL_SECONDS: "3600",
     }),
     stderr: "pipe",
   });
@@ -61,7 +63,7 @@ test("mcp create, inject, smtp, and wait_for_otp", { timeout: 25_000 }, async ()
   transport.stderr?.on("data", (chunk: Buffer | string) => {
     stderr.push(String(chunk));
   });
-  const client = new Client({ name: "agentbox-test", version: "0.0.0" });
+  const client = new Client({ name: "open-agentmail-test", version: "0.0.0" });
   try {
     await client.connect(transport);
     const listed = await client.listTools();

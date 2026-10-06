@@ -8,7 +8,7 @@ import { log } from "./log.js";
 import { SmtpReceiver } from "./smtp.js";
 import { Store } from "./store.js";
 
-export class Agentbox {
+export class OpenAgentMail {
   readonly config: Config;
   readonly store: Store;
   readonly actions: Actions;
@@ -85,7 +85,7 @@ export class Agentbox {
       return;
     }
     throw new Error(
-      "Refusing to bind HTTP beyond localhost without AGENTBOX_API_TOKEN. OTP mail would be readable by anyone who can reach the port.",
+      "Refusing to bind HTTP beyond localhost without OPEN_AGENTMAIL_API_TOKEN. OTP mail would be readable by anyone who can reach the port.",
     );
   }
 }

@@ -1,6 +1,6 @@
-# Agentbox
+# Open-AgentMail
 
-Agentbox is a self-hosted mailbox for AI agents doing UI tests. An agent creates a temporary inbox, uses that address to sign up or log in, reads the email OTP or magic link, then deletes the inbox.
+Open-AgentMail is a self-hosted mailbox for AI agents doing UI tests. An agent creates a temporary inbox, uses that address to sign up or log in, reads the email OTP or magic link, then deletes the inbox.
 
 It runs on your machine. There is no account, no API key, and no paid temp-mail service.
 
@@ -16,7 +16,7 @@ npm run mcp
 
 ## Scope
 
-Agentbox is for **email OTP, magic links, and a generated signup password**.
+Open-AgentMail is for **email OTP, magic links, and a generated signup password**.
 
 It is not for:
 
@@ -29,7 +29,7 @@ It is not for:
 
 For those apps, use a domain you control and point its MX at this server. You are responsible for using that setup only on systems you are allowed to test.
 
-Authorized staging and local end-to-end tests only. Do not use Agentbox to break a site's terms, to create accounts you are not allowed to create, or to read mail that is not part of that test.
+Authorized staging and local end-to-end tests only. Do not use Open-AgentMail to break a site's terms, to create accounts you are not allowed to create, or to read mail that is not part of that test.
 
 ## Local test without a domain
 
@@ -79,9 +79,9 @@ npm run example:smtp
 
 That creates `smtp-demo@temp.local`, sends a message to the local SMTP port, and reads it back through the HTTP API.
 
-Anything that can speak SMTP can do the same. Point the app under test at `127.0.0.1:2525` and the domain `temp.local`, or send with a one-off client. Unknown recipients are rejected until you create the inbox, unless you set `AGENTBOX_AUTO_CREATE=true`.
+Anything that can speak SMTP can do the same. Point the app under test at `127.0.0.1:2525` and the domain `temp.local`, or send with a one-off client. Unknown recipients are rejected until you create the inbox, unless you set `OPEN_AGENTMAIL_AUTO_CREATE=true`.
 
-`password` in the create response is for the **signup form on the app you are testing**. Agentbox does not ask for it to read mail. On localhost, the HTTP API is open because it is bound to loopback. Do not expose that port.
+`password` in the create response is for the **signup form on the app you are testing**. Open-AgentMail does not ask for it to read mail. On localhost, the HTTP API is open because it is bound to loopback. Do not expose that port.
 
 A Playwright sketch of the same sequence lives in [examples/playwright-pattern.md](examples/playwright-pattern.md). The runnable app under test is [Fieldnote](examples/demo-app/README.md): `npm start` in one terminal and `npm run demo` in another, then open http://localhost:3000. It is documentation, not a bundled test.
 
@@ -92,17 +92,17 @@ Build first so `dist/cli.js` exists. The copy-paste setup for Cursor, Claude Cod
 ```json
 {
   "mcpServers": {
-    "agentbox": {
+    "open-agentmail": {
       "command": "node",
-      "args": ["/absolute/path/to/agentbox/dist/cli.js", "mcp"],
-      "cwd": "/absolute/path/to/agentbox",
+      "args": ["/absolute/path/to/open-agentmail/dist/cli.js", "mcp"],
+      "cwd": "/absolute/path/to/open-agentmail",
       "env": {
-        "AGENTBOX_DOMAIN": "temp.local",
-        "AGENTBOX_SMTP_HOST": "127.0.0.1",
-        "AGENTBOX_SMTP_PORT": "2525",
-        "AGENTBOX_HTTP_PORT": "8791",
-        "AGENTBOX_PERSIST": "true",
-        "AGENTBOX_DATA_DIR": "./data"
+        "OPEN_AGENTMAIL_DOMAIN": "temp.local",
+        "OPEN_AGENTMAIL_SMTP_HOST": "127.0.0.1",
+        "OPEN_AGENTMAIL_SMTP_PORT": "2525",
+        "OPEN_AGENTMAIL_HTTP_PORT": "8791",
+        "OPEN_AGENTMAIL_PERSIST": "true",
+        "OPEN_AGENTMAIL_DATA_DIR": "./data"
       }
     }
   }
@@ -156,25 +156,25 @@ The HTTP server is optional glue for scripts and the mailroom page. MCP is the a
 | `POST` | `/api/inboxes/:id/wait-otp` |
 | `POST` | `/api/inboxes/:id/wait-link` |
 
-If `AGENTBOX_API_TOKEN` is set, API routes require `Authorization: Bearer <token>`. `/health` and the HTML page stay open. Binding HTTP on a non-loopback address without a token is refused.
+If `OPEN_AGENTMAIL_API_TOKEN` is set, API routes require `Authorization: Bearer <token>`. `/health` and the HTML page stay open. Binding HTTP on a non-loopback address without a token is refused.
 
 ## Configuration
 
-Environment variables and flags use the same settings. See [.env.example](.env.example). Agentbox does not load `.env` by itself.
+Environment variables and flags use the same settings. See [.env.example](.env.example). Open-AgentMail does not load `.env` by itself. `AGENTBOX_*` still applies when the matching `OPEN_AGENTMAIL_*` variable is unset.
 
 | Variable | Default | Flag |
 | --- | --- | --- |
-| `AGENTBOX_DOMAIN` | `temp.local` | `--domain` |
-| `AGENTBOX_SMTP_HOST` | `127.0.0.1` | `--smtp-host` |
-| `AGENTBOX_SMTP_PORT` | `2525` | `--smtp-port` |
-| `AGENTBOX_HTTP_HOST` | `127.0.0.1` | `--http-host` |
-| `AGENTBOX_HTTP_PORT` | `8791` | `--http-port` |
-| `AGENTBOX_DATA_DIR` | `./data` | `--data-dir` |
-| `AGENTBOX_PERSIST` | `true` | `--no-persist` |
-| `AGENTBOX_AUTO_CREATE` | `false` | `--auto-create` |
-| `AGENTBOX_INBOX_TTL_SECONDS` | `3600` | `--ttl-seconds` |
-| `AGENTBOX_API_TOKEN` | unset | |
-| `AGENTBOX_SMTP_ENABLED` / `AGENTBOX_HTTP_ENABLED` | `true` | `--no-smtp` / `--no-http` |
+| `OPEN_AGENTMAIL_DOMAIN` | `temp.local` | `--domain` |
+| `OPEN_AGENTMAIL_SMTP_HOST` | `127.0.0.1` | `--smtp-host` |
+| `OPEN_AGENTMAIL_SMTP_PORT` | `2525` | `--smtp-port` |
+| `OPEN_AGENTMAIL_HTTP_HOST` | `127.0.0.1` | `--http-host` |
+| `OPEN_AGENTMAIL_HTTP_PORT` | `8791` | `--http-port` |
+| `OPEN_AGENTMAIL_DATA_DIR` | `./data` | `--data-dir` |
+| `OPEN_AGENTMAIL_PERSIST` | `true` | `--no-persist` |
+| `OPEN_AGENTMAIL_AUTO_CREATE` | `false` | `--auto-create` |
+| `OPEN_AGENTMAIL_INBOX_TTL_SECONDS` | `3600` | `--ttl-seconds` |
+| `OPEN_AGENTMAIL_API_TOKEN` | unset | |
+| `OPEN_AGENTMAIL_SMTP_ENABLED` / `OPEN_AGENTMAIL_HTTP_ENABLED` | `true` | `--no-smtp` / `--no-http` |
 
 `0` for the TTL keeps an inbox until `delete_inbox`. Expired inboxes are removed on the next read and by a once-a-minute sweep in the process. The store is `data/store.json`. It contains message bodies, including codes. Do not commit it.
 
@@ -193,22 +193,22 @@ Node.js 20 or newer.
 
 `temp.local` will not receive mail from Gmail or from a SaaS app on the internet. Many sites also reject domains that look disposable. Use a domain you own.
 
-1. Pick the domain Agentbox should accept, for example `test.example.com`.
+1. Pick the domain Open-AgentMail should accept, for example `test.example.com`.
 2. Publish DNS:
    - `test.example.com` MX `10` `mail.example.com`
-   - `mail.example.com` A or AAAA pointing at the host running Agentbox
+   - `mail.example.com` A or AAAA pointing at the host running Open-AgentMail
 3. Let the host receive TCP port 25. Binding port 25 usually needs extra privileges, so you can listen on `2525` and forward `25 → 2525` on the firewall.
-4. Start Agentbox with SMTP on a public interface and HTTP still on localhost:
+4. Start Open-AgentMail with SMTP on a public interface and HTTP still on localhost:
 
 ```bash
-AGENTBOX_DOMAIN=test.example.com \
-AGENTBOX_SMTP_HOST=0.0.0.0 \
-AGENTBOX_SMTP_PORT=25 \
-AGENTBOX_HTTP_HOST=127.0.0.1 \
+OPEN_AGENTMAIL_DOMAIN=test.example.com \
+OPEN_AGENTMAIL_SMTP_HOST=0.0.0.0 \
+OPEN_AGENTMAIL_SMTP_PORT=25 \
+OPEN_AGENTMAIL_HTTP_HOST=127.0.0.1 \
 npm start
 ```
 
-Create inboxes as `something@test.example.com` before the app sends, or set `AGENTBOX_AUTO_CREATE=true` if you want the first delivery to create the mailbox. Keep the HTTP port on loopback. That port can read every code in the store.
+Create inboxes as `something@test.example.com` before the app sends, or set `OPEN_AGENTMAIL_AUTO_CREATE=true` if you want the first delivery to create the mailbox. Keep the HTTP port on loopback. That port can read every code in the store.
 
 This MVP does not send mail, sign messages with DKIM, or run a spam filter. A public listener will get probes. Run it on a host you control, for staging domains you control.
 

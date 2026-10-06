@@ -1,4 +1,4 @@
-import { Agentbox } from "../src/app.js";
+import { OpenAgentMail } from "../src/app.js";
 import type { Config } from "../src/config.js";
 import { sendSmtpMessage } from "../src/smtp-send.js";
 
@@ -20,7 +20,7 @@ const config: Config = {
   maxBodyChars: 100_000,
 };
 
-const app = new Agentbox(config);
+const app = new OpenAgentMail(config);
 await app.start();
 
 try {

@@ -6,7 +6,7 @@ export function debugPage(): string {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='3' fill='%23f3ecdf' stroke='%230e6b56' stroke-width='2'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-size='12' font-family='sans-serif' font-weight='700' fill='%230e6b56'%3EAB%3C/text%3E%3C/svg%3E">
-  <title>Agentbox mailroom</title>
+  <title>Open-AgentMail mailroom</title>
   <style>
     :root {
       color-scheme: light;
@@ -117,7 +117,7 @@ export function debugPage(): string {
       <div class="brand">
         <div class="stamp" aria-hidden="true"><span>AB</span></div>
         <div>
-          <h1>Agentbox mailroom</h1>
+          <h1>Open-AgentMail mailroom</h1>
           <p class="lede">Temporary inboxes for authorized UI tests that sign up or log in with email. OTP codes and magic links only — not Google, GitHub, or any other OAuth.</p>
         </div>
       </div>
@@ -170,11 +170,11 @@ export function debugPage(): string {
       </section>
     </main>
     <footer>
-      <p id="scope">temp.local receives only mail sent to this machine. Real websites need a domain you control and an MX record pointed at Agentbox. Keep this page on localhost.</p>
+      <p id="scope">temp.local receives only mail sent to this machine. Real websites need a domain you control and an MX record pointed at Open-AgentMail. Keep this page on localhost.</p>
     </footer>
   </div>
   <script>
-    const state = { inboxes: [], selectedId: "", messages: [], token: sessionStorage.getItem("agentbox-token") || "" };
+    const state = { inboxes: [], selectedId: "", messages: [], token: sessionStorage.getItem("open-agentmail-token") || "" };
 
     const banner = document.getElementById("banner");
     const list = document.getElementById("inbox-list");
@@ -193,10 +193,10 @@ export function debugPage(): string {
       const response = await fetch(path, Object.assign({}, options, { headers: headers }));
       const data = await response.json().catch(function () { return {}; });
       if (response.status === 401) {
-        const entered = window.prompt("This mailroom requires AGENTBOX_API_TOKEN");
+        const entered = window.prompt("This mailroom requires OPEN_AGENTMAIL_API_TOKEN");
         if (entered) {
           state.token = entered.trim();
-          sessionStorage.setItem("agentbox-token", state.token);
+          sessionStorage.setItem("open-agentmail-token", state.token);
           return api(path, options);
         }
       }

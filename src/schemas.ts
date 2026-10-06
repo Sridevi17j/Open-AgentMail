@@ -75,7 +75,7 @@ export const deleteInboxInput = z.object(inboxRefShape);
 
 export const injectMessageInput = z.object({
   ...inboxRefShape,
-  from: z.string().max(500).optional().describe("From header. Defaults to a local Agentbox sender."),
+  from: z.string().max(500).optional().describe("From header. Defaults to a local Open-AgentMail sender."),
   subject: z.string().min(1).max(500).describe("Message subject."),
   text: z.string().max(100_000).optional().describe("Plain-text body."),
   html: z.string().max(100_000).optional().describe("HTML body."),

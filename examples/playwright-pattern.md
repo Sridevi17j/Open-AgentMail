@@ -1,6 +1,6 @@
 # Playwright pattern
 
-This is a sketch for a script that already has Agentbox running (`npm run dev` or `npm start`). It is not a dependency of this package and it is not run in CI. The same sequence is what an agent should follow with the MCP tools `create_inbox`, `wait_for_otp`, and `delete_inbox`.
+This is a sketch for a script that already has Open-AgentMail running (`npm run dev` or `npm start`). It is not a dependency of this package and it is not run in CI. The same sequence is what an agent should follow with the MCP tools `create_inbox`, `wait_for_otp`, and `delete_inbox`.
 
 Use it only against an application you are allowed to test. Do not point it at Google, GitHub, or any other OAuth provider. `temp.local` works when the app delivers mail to the local SMTP port, or when you inject the message yourself. A real staging site needs your own domain and an MX record.
 

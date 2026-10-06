@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const PACKAGE_NAME = "agentbox";
+export const PACKAGE_NAME = "open-agentmail";
 
 function readVersion(): string {
   const here = dirname(fileURLToPath(import.meta.url));

@@ -9,7 +9,7 @@ import { Store } from "./store.js";
 function memoryStore(overrides: { maxMessagesPerInbox?: number; defaultTtlSeconds?: number } = {}): Store {
   return new Store({
     domain: "temp.local",
-    dataDir: join(tmpdir(), "agentbox-memory"),
+    dataDir: join(tmpdir(), "open-agentmail-memory"),
     persist: false,
     defaultTtlSeconds: overrides.defaultTtlSeconds ?? 3600,
     maxMessagesPerInbox: overrides.maxMessagesPerInbox ?? 20,
@@ -56,7 +56,7 @@ test("expires inboxes when the clock passes expiresAt", async () => {
 });
 
 test("reloads a file-backed store", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "agentbox-store-"));
+  const dir = await mkdtemp(join(tmpdir(), "open-agentmail-store-"));
   const options = {
     domain: "temp.local",
     dataDir: dir,

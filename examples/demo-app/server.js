@@ -345,7 +345,7 @@ async function handle(req, res) {
       } catch (error) {
         users.delete(email);
         const detail = error instanceof Error ? error.message : "Could not send mail";
-        send(res, 502, signupPage(`${detail} Create the inbox in Agentbox first, then try again.`));
+        send(res, 502, signupPage(`${detail} Create the inbox in Open-AgentMail first, then try again.`));
         return;
       }
       redirect(res, "/verify", [cookie("fieldnote_pending", email, 600)]);

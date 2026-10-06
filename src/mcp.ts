@@ -31,7 +31,7 @@ export function attachMcp(server: McpServer, actions: Actions): void {
     {
       title: "Create inbox",
       description:
-        "Create an ephemeral email inbox for an authorized UI test. Returns the address to type into a signup or login form, a random password for that app (not for reading mail), inbox_id, and expires_at. The default domain temp.local only receives mail delivered to this Agentbox SMTP server. Do not use this for Google, GitHub, or other OAuth logins.",
+        "Create an ephemeral email inbox for an authorized UI test. Returns the address to type into a signup or login form, a random password for that app (not for reading mail), inbox_id, and expires_at. The default domain temp.local only receives mail delivered to this Open-AgentMail SMTP server. Do not use this for Google, GitHub, or other OAuth logins.",
       inputSchema: createInboxInput,
       outputSchema: createInboxOutput,
       annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },

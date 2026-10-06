@@ -5,7 +5,7 @@ import type { Actions } from "./actions.js";
 import { createInboxResult } from "./actions.js";
 import type { Config } from "./config.js";
 import { debugPage } from "./debug-page.js";
-import { AgentboxError } from "./errors.js";
+import { OpenAgentMailError } from "./errors.js";
 import { log } from "./log.js";
 import {
   createInboxInput,
@@ -36,7 +36,7 @@ function authorize(req: IncomingMessage, token: string | null): void {
   if (!token) return;
   const header = req.headers.authorization ?? "";
   const match = /^Bearer\s+(.+)$/i.exec(header);
-  if (!match || match[1] !== token) throw new AgentboxError("Unauthorized", 401);
+  if (!match || match[1] !== token) throw new OpenAgentMailError("Unauthorized", 401);
 }
 
 async function readJson(req: IncomingMessage): Promise<unknown> {
@@ -45,20 +45,20 @@ async function readJson(req: IncomingMessage): Promise<unknown> {
   for await (const chunk of req) {
     const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
     size += buffer.length;
-    if (size > 1_000_000) throw new AgentboxError("Request body is too large", 413);
+    if (size > 1_000_000) throw new OpenAgentMailError("Request body is too large", 413);
     chunks.push(buffer);
   }
   if (size === 0) return {};
   try {
     return JSON.parse(Buffer.concat(chunks).toString("utf8")) as unknown;
   } catch {
-    throw new AgentboxError("Request body must be JSON");
+    throw new OpenAgentMailError("Request body must be JSON");
   }
 }
 
 function asRecord(body: unknown): Record<string, unknown> {
   if (body && typeof body === "object" && !Array.isArray(body)) return body as Record<string, unknown>;
-  throw new AgentboxError("Request body must be a JSON object");
+  throw new OpenAgentMailError("Request body must be a JSON object");
 }
 
 function parseBody<T>(schema: ZodType<T>, body: unknown): T {
@@ -67,7 +67,7 @@ function parseBody<T>(schema: ZodType<T>, body: unknown): T {
     const message = result.error.issues
       .map((issue) => `${issue.path.join(".") || "body"}: ${issue.message}`)
       .join("; ");
-    throw new AgentboxError(message);
+    throw new OpenAgentMailError(message);
   }
   return result.data;
 }
@@ -172,7 +172,7 @@ async function handle(app: HttpApp, req: IncomingMessage, res: ServerResponse): 
     send(res, 404, { error: "Not found" });
   } catch (error) {
     if (res.writableEnded) return;
-    if (error instanceof AgentboxError) {
+    if (error instanceof OpenAgentMailError) {
       send(res, error.status, { error: error.message });
       return;
     }
@@ -184,7 +184,7 @@ async function handle(app: HttpApp, req: IncomingMessage, res: ServerResponse): 
 function healthBody(app: HttpApp) {
   return {
     ok: true,
-    name: "agentbox",
+    name: "open-agentmail",
     version: VERSION,
     domain: app.config.domain,
     smtp: { enabled: app.config.smtpEnabled, host: app.config.smtpHost, port: app.smtpPort() },

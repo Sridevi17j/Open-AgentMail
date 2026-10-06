@@ -83,7 +83,7 @@ Anything that can speak SMTP can do the same. Point the app under test at `127.0
 
 `password` in the create response is for the **signup form on the app you are testing**. Agentbox does not ask for it to read mail. On localhost, the HTTP API is open because it is bound to loopback. Do not expose that port.
 
-A Playwright sketch of the same sequence lives in [examples/playwright-pattern.md](examples/playwright-pattern.md). It is documentation, not a bundled test.
+A Playwright sketch of the same sequence lives in [examples/playwright-pattern.md](examples/playwright-pattern.md). The runnable app under test is [Fieldnote](examples/demo-app/README.md): `npm start` in one terminal and `npm run demo` in another, then open http://localhost:3000. It is documentation, not a bundled test.
 
 ## Configure Cursor
 

@@ -7,3 +7,4 @@
 - Local HTTP mailroom and API on `127.0.0.1:8791`.
 - Cursor skill for the email OTP / magic-link UI-test flow.
 - Setup guide for Claude Code, Codex CLI, and Cursor in `docs/CONNECT.md`.
+- Fieldnote demo app in `examples/demo-app` for email-OTP signup against the local SMTP port.

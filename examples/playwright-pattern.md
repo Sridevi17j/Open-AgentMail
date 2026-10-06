@@ -20,7 +20,7 @@ const browser = await chromium.launch();
 const page = await browser.newPage();
 
 try {
-  await page.goto("http://127.0.0.1:3000/signup");
+  await page.goto("http://127.0.0.1:3000/");
   await page.getByLabel("Email").fill(inbox.address);
   await page.getByLabel("Password").fill(inbox.password);
   await page.getByRole("button", { name: "Create account" }).click();

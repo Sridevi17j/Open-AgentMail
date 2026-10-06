@@ -27,6 +27,7 @@
     "smoke": "AGENTBOX_SMOKE_DIST=1 node --import tsx --test src/mcp.test.ts",
     "example:otp": "tsx examples/otp-flow.ts",
     "example:smtp": "tsx examples/send-smtp.ts",
+    "demo": "node examples/demo-app/server.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

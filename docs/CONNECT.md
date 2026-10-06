@@ -236,12 +236,20 @@ You can watch the same messages at `http://127.0.0.1:8791` while the agent sessi
 
 Use this only on a local or staging app you are allowed to test. Point that app's mailer at `127.0.0.1:2525` if it must deliver to `temp.local`. Otherwise the message never arrives, and `inject_message` would only fake the result.
 
+Fieldnote, in `examples/demo-app`, is a local app that already sends mail to Agentbox. Start it with `npm run demo` (http://localhost:3000) while Agentbox is running. See [examples/demo-app/README.md](../examples/demo-app/README.md).
+
 ```text
-Use the ui-email-auth skill. Sign up on http://127.0.0.1:3000 with a new Agentbox inbox.
-Record the time before you submit. Fill the email with the inbox address and the password
-field with the generated password. After submit, wait for the email OTP (not a Google or
-GitHub login). Enter the code, confirm the account is signed in, then delete the inbox
-even if a step fails.
+Use agentbox to test signup and login on http://localhost:3000
+```
+
+That should end on the Fieldnote dashboard: `Welcome, <inbox address>`.
+
+```text
+Use the ui-email-auth skill. Sign up on http://localhost:3000 with a new Agentbox inbox.
+Record the time before you submit. Fill #email with the inbox address and #password
+with the generated password, then click Create account. Wait for the email OTP (not a
+Google or GitHub login). Enter the code in #otp and click Verify. Log in, confirm the
+dashboard greets that email, then delete the inbox even if a step fails.
 ```
 
 For a magic link, say `wait_for_link` and tell the agent to open the URL only if its host is the app under test.
